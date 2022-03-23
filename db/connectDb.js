@@ -1,29 +1,21 @@
-let express=require('express');
-let api=express();
-var mongo = require('mongodb');
-// let mangoose=require('mangoose');
-
-var MongoClient = require('mongodb').MongoClient;
-
-
 var url = "mongodb://localhost:27017/";
 
-MongoClient.connect(url, function(err, db) {
-  if (err) throw err;
-  var dbo = db.db("mydb");
-  dbo.createCollection("customers", function(err, res) {
-    if (err) throw err;
-    console.log("Collection created!");
-    db.close();
-  });
-})
-MongoClient.connect(url, function(err, db) {
-  if (err) throw err;
-  var dbo = db.db("mydb");
-  dbo.createCollection("customers", function(err, res) {
-    if (err) throw err;
-    console.log("Collection created!");
-    db.close();
-  });
-})
+const express = require('express');
+const morgan = require('morgan');
+const helmet = require('helmet');
+const bodyParser = require('body-parser');
+
+require('dotenv').config();
+
+const app = express();
+const monk = require('monk');
+
+app.use(helmet());
+app.use(morgan('dev'));
+app.use(bodyParser.json());
+
+const port = process.env.PORT || 8080;
+app.listen(port, () => {
+  console.log(`Listening on port ${port}`);
+});
 
