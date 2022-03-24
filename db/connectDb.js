@@ -19,3 +19,7 @@ app.listen(port, () => {
   console.log(`Listening on port ${port}`);
 });
 
+
+DB_URL = localhost/my-employees
+TEST_DB_URL = localhost/test-my-employees
+PORT = 5000
