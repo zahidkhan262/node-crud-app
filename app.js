@@ -1,7 +1,18 @@
 const express = require('express');
 const app = express();
-
+const mongoose = require('mongoose');
+const { MONGOURI } = require('./keys/keys');
 const PORT = 7000;
+
+mongoose.connect(MONGOURI)
+mongoose.connection.on('connected', () => {
+    console.log('connected to data base');
+})
+mongoose.connection.on('error', (err) => {
+    console.log("Getting error", err)
+})
+
+
 // const customeMiddleWare = (res, req, next) => {
 //     console.log("middleware")
 //     next()
@@ -22,5 +33,5 @@ app.get('/', (res, req) => {
 // })
 
 app.listen(PORT, () => {
-    console.log(`server is live on this port... ${PORT}`)
+    console.log(`server is live on this port...${PORT}`)
 })
