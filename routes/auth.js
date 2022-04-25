@@ -21,7 +21,7 @@ router.post('/signup', (req, res) => {
     User.findOne({ email: email })
         .then((savedUser) => {
             if (savedUser) {
-                return res.status(422).json({ error: "please fill all fields" })
+                return res.status(422).json({ error: "email is already exists" })
             }
             bcrypt.hash(password, 6)
                 .then(hashedPassword => {
