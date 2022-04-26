@@ -2,6 +2,7 @@ const express = require('express');
 const { json } = require('express/lib/response');
 const app = express();
 const mongoose = require('mongoose');
+const {MONGO_DATABASE,MONGO_PASS, MONGO_USER} = require('./keys/keys');
 require('dotenv').config()
 
 require('./models/user');
@@ -9,9 +10,7 @@ require('./models/user');
 app.use(express.json())
 app.use(require('./routes/auth'));
 
-let MONGO_USER = 'zahidkhan262';
-let MONGO_PASS = 'f45alts25JVpyOG4';
-let MONGO_DATABASE = 'myFirstDatabase';
+
 
 mongoose.connect(
     `mongodb+srv://${MONGO_USER}:${MONGO_PASS}@cluster0.qs4sz.mongodb.net/${MONGO_DATABASE}?retryWrites=true&w=majority`,
