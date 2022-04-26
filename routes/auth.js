@@ -4,6 +4,8 @@ const mongoose = require('mongoose')
 const User = mongoose.model("User");
 const bcrypt = require('bcryptjs');
 var jwt = require('jsonwebtoken');
+const Jwt_Token = require('../keys/keys');
+const protectLogin = require('../middleware/protectLogin')
 
 
 
@@ -12,6 +14,11 @@ var jwt = require('jsonwebtoken');
 // get method for print hello node js as default routes
 router.get('/', (req, res) => {
     res.send("hello Node js")
+});
+
+// protected router
+router.get('/protected', protectLogin, (req, res) => {
+    res.send("hello User")
 });
 // for signup
 router.post('/signup', (req, res) => {
@@ -46,7 +53,6 @@ router.post('/signup', (req, res) => {
 });
 
 // for sign In
-
 router.post('/signin', (req, res) => {
     const { email, password } = req.body;
 
@@ -61,7 +67,10 @@ router.post('/signin', (req, res) => {
             bcrypt.compare(password, savedUser.password)
                 .then(doMatch => {
                     if (doMatch) {
-                        res.json({ message: "Yeah You are successfully logged in.." })
+                        // res.json({ message: "Yeah You are successfully logged in.." })
+                        const Jwt_Token = require('../keys/keys');
+                        const token = jwt.sign({ _id: savedUser._id }, Jwt_Token);
+                        res.json({ token })
                     } else {
                         return res.status(422).json({ error: "Invalid email or password" })
                     }
