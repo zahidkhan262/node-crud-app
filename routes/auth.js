@@ -4,8 +4,8 @@ const mongoose = require('mongoose')
 const User = mongoose.model("User");
 const bcrypt = require('bcryptjs');
 var jwt = require('jsonwebtoken');
-const Jwt_Token = require('../keys/keys');
 const protectLogin = require('../middleware/protectLogin')
+const Jwt_Token = require('../keys/keys');
 
 
 
@@ -16,10 +16,13 @@ router.get('/', (req, res) => {
     res.send("hello Node js")
 });
 
+
 // protected router
 router.get('/protected', protectLogin, (req, res) => {
     res.send("hello User")
 });
+
+
 // for signup
 router.post('/signup', (req, res) => {
     const { name, email, password } = req.body
@@ -51,6 +54,8 @@ router.post('/signup', (req, res) => {
             console.log(err);
         })
 });
+
+
 
 // for sign In
 router.post('/signin', (req, res) => {
