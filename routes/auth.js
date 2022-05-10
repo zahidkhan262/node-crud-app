@@ -19,7 +19,7 @@ router.get('/', (req, res) => {
 
 // protected router
 router.get('/protected', protectLogin, (req, res) => {
-    res.send("hello User")
+    res.send("hello developer")
 });
 
 
@@ -34,7 +34,7 @@ router.post('/signup', (req, res) => {
             if (savedUser) {
                 return res.status(422).json({ error: "email is already exists" })
             }
-            bcrypt.hash(password, 6)
+            bcrypt.hash(password, 8)
                 .then(hashedPassword => {
                     const user = new User({
                         email,
@@ -77,7 +77,7 @@ router.post('/signin', (req, res) => {
                         const token = jwt.sign({ _id: savedUser._id }, Jwt_Token);
                         res.json({ token })
                     } else {
-                        return res.status(422).json({ error: "Invalid email or password" })
+                        return res.status(422).json({ error: "Invalid emailID or password" })
                     }
                 })
                 .catch(err => {
