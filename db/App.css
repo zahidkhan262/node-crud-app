@@ -1,0 +1,139 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+a {
+    text-decoration: none;
+}
+:root {
+    --primary-color: #25c2a0;
+    --navbar-color: #242525;
+    --main_body-color: #18191a;
+    --footer-color: #193c47;
+}
+input,
+button {
+    border: none;
+    outline: none;
+    box-shadow: none;
+}
+.margin-t-10 {
+    margin-top: 10px;
+}
+
+.margin-t-15 {
+    margin-top: 10px;
+}
+
+.margin-t-100 {
+    margin-top: 100px;
+}
+
+.d-f {
+    display: flex;
+}
+
+.justify-center {
+    justify-content: center;
+    align-items: center;
+}
+.f-center {
+    align-items: center;
+}
+
+.align-center {
+    justify-content: space-between;
+    align-items: center;
+}
+.center {
+    text-align: center;
+}
+
+/* header */
+header {
+    background: var(--navbar-color);
+    width: 100%;
+    padding: 10px 20px;
+}
+nav ul {
+    margin: 0;
+    padding: 0;
+}
+nav ul li {
+    list-style: none;
+    display: inline-block;
+}
+nav ul li a {
+    text-decoration: none;
+    padding: 10px;
+        color: #fff;
+        font-size: 18px;
+}
+.active {
+    color: var(--primary-color);
+}
+.logo img {
+    width: 40px;
+    border-radius: 100%;
+    padding-left: 5px;
+}
+
+.logo span {
+    font-size: 24px;
+    color: var(--primary-color);
+}
+/* CONTAINER */
+.my_container {
+    max-width: 1400px;
+    width: 100%;
+    padding: 0px 20px;
+    }
+.main-form {
+    width: 400px;
+    padding: 30px 20px;
+    background: #25c2a066;
+    border-radius: 3px;
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+}
+.heading {
+    border-bottom: 2px solid #ffbd2e;
+    color: #ffbd2e;
+}
+
+/* input field */
+
+.input_field {
+    width: 100%;
+    margin: 10px 0px;
+    }
+.input_field input {
+    padding: 8px 12px;
+    width: 80%;
+    font-size: 16px;
+    font-weight: 500;
+    color: var(--main_body-color);
+    border-left: 6px solid #ffbd2e;
+    transition: all 0.3s;
+}
+.input_field input:hover {
+    border-left: 6px solid #b47c02;
+}
+.submit_btn {
+    background: var(--footer-color);
+    padding: 8px 24px;
+    color: #fff;
+    font-size: 18px;
+    border-radius: 3px;
+}
+@media(max-width:776px) {
+    .my_container {
+        width: 100%;
+        padding: 0px;
+        margin-top: 0;
+    }
+
+    .main-form {
+        height: 100vh;
+    }
+}
