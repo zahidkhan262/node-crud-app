@@ -71,3 +71,13 @@ app.listen(PORT, () => {
     console.log("server is live on this port", PORT)
 })
 })
+
+// env
+
+MONGO_PASSWORD = 'WVsgYYQvoBfkb01o'
+MONGO_USERNAME = 'zahidkhan262'
+DATA_BASE ='cmartDB'
+JWT_SECRET = 'aadrefawefrwew23fedff'
+RegEx =!/^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
+
+
