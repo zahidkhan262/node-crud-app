@@ -39,4 +39,35 @@ const PORT = process.env.PORT || 5000;
 
 app.listen(PORT, () => {
     console.log("server is live on this port", PORT)
+    
+    
+    
+//     new data
+    
+    
+const express = require('express');
+const mongoose = require('mongoose');
+const app = express();
+const cors = require('cors')
+require('dotenv').config();
+const userRoutes =require('./routes/routers')
+app.use(express.json())
+
+app.use(cors());
+
+mongoose.connect(`mongodb+srv://${process.env.MONGO_USERNAME}:${process.env.MONGO_PASSWORD}@cmart.qs4sz.mongodb.net/${process.env.DATA_BASE}?retryWrites=true&w=majority`)
+    .then(() => {
+        console.log('Connected to database !!');
+    })
+    .catch((err) => {
+        console.log('Connection failed !!' + err.message);
+    });
+
+const PORT = process.env.PORT || 5000;
+
+app.use(userRoutes);
+
+app.listen(PORT, () => {
+    console.log("server is live on this port", PORT)
+})
 })
