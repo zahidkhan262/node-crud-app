@@ -87,3 +87,88 @@ router.post('/signin', (req, res) => {
 })
 
 module.exports = router;
+
+
+
+
+// new router
+
+const express = require('express');
+const router = express.Router()
+const User = require('../models/user')
+const bcrypt = require('bcryptjs')
+const jwt = require('jsonwebtoken')
+
+require('dotenv').config();
+
+
+
+router.post('/signup', async (req, res) => {
+    try {
+
+        const { firstname, lastname, email, password } = req.body
+
+        if (!firstname || !lastname || !email || !password) {
+            return res.status(422).json({ error: "Please fill all the fields" });
+        }
+        const userData = await User.findOne({ email: email });
+
+        if (userData) return res.status(422).json({ error: "the email id is already exsist!!" })
+
+        const hashedPassword = await bcrypt.hash(password, 12)
+
+        const user = await User.create({
+            firstname: firstname,
+            lastname: lastname,
+            email: email,
+            password: hashedPassword
+        })
+        if (user) return res.json({
+            data: user,
+            message: "Saved successfully"
+        })
+    } catch (err) {
+        console.log(err)
+        res.send({
+            error: err
+        })
+    }
+})
+
+router.post('/signin', async (req, res) => {
+
+    try {
+        const { email, password } = req.body
+
+        if (!email && !password) {
+            return res.status(422).json({ err: "Please add email and password" })
+        }
+
+        const savedUser = await User.findOne({ email: email })
+
+        if (!savedUser) return res.status(422).json({ error: "Invalid Email or password" })
+
+        const checkPassword = await bcrypt.compare(password, savedUser.password)
+
+        if (!checkPassword) {
+            return res.status(422).json({ error: "Invalid user name and password" })
+            
+        }
+        else{
+            const token = await jwt.sign({ _id: savedUser._id }, process.env.JWT_SECRET);
+            const { firstname, lastname, email, password } = savedUser;
+            res.json({ token, user: { firstname, lastname, email, password }, message:"successfully signed in" })
+
+            // res.json({message:"successfully signed in"})
+        }
+
+    } catch (err) {
+        console.log(err)
+        res.send({
+            error: err
+        })
+    }
+
+})
+
+module.exports = router
