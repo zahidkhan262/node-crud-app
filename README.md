@@ -1,4 +1,12 @@
 # node-crud-app
+download package
+<!--   "bcryptjs": "^2.4.3",
+    "body-parser": "^1.20.0",
+    "cors": "^2.8.5",
+    "dotenv": "^16.0.1",
+    "express": "^4.18.1",
+    "jsonwebtoken": "^8.5.1",
+    "mongoose": "^6.3.3" -->
 
 We create the repository and install the dependencies. The entry point is the server. ...
 express: It is a minimal and flexible Node. ...
