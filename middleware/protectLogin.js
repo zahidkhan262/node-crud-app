@@ -22,3 +22,27 @@ module.exports = (req, res, next) => {
         next()
     })
 }
+
+
+// new
+
+require('dotenv').config();
+const jwt = require('jsonwebtoken')
+const mongoose = require('mongoose')
+
+const User = mongoose.model("User");
+
+module.exports = async (req, res, next) => {
+    const { authorization } =  req.headers
+     
+   await jwt.verify(authorization, process.env.JWT_SECRET, async(err, payload) => {
+        if (err) {
+            return res.status(401).json({ error: "You must be logged in.." })
+        }
+        const { _id } = payload
+        const findUserData = await User.findById(_id)
+        req.user = findUserData
+        next()
+    })
+
+}
