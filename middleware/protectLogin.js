@@ -46,3 +46,23 @@ module.exports = async (req, res, next) => {
     })
 
 }
+
+
+// react
+import React, { createContext, useState } from 'react';
+
+export const GlobalContext = createContext()
+
+const GlobalContextProvider = (props) => {
+    const [user, setUser] = useState(false);
+
+    const value = { user, setUser }
+
+    return (
+        <GlobalContext.Provider value={value}>
+            {props.children}
+        </GlobalContext.Provider>
+    )
+}
+
+export default GlobalContextProvider
