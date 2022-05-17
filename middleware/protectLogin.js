@@ -48,7 +48,7 @@ module.exports = async (req, res, next) => {
 }
 
 
-// react
+// react Global
 import React, { createContext, useState } from 'react';
 
 export const GlobalContext = createContext()
@@ -66,3 +66,19 @@ const GlobalContextProvider = (props) => {
 }
 
 export default GlobalContextProvider
+
+// new protected
+
+import React, { useContext } from 'react'
+import { GlobalContext } from '../contextapi/GlobalContext';
+import { Outlet, Navigate } from 'react-router-dom';
+
+const ProtectedRouting = ({ component: Component, ...rest }) => {
+    const { user } = useContext(GlobalContext);
+    console.log(user)
+    return (
+        user ? <Outlet /> : <Navigate to="/home" />
+    )
+}
+
+export default ProtectedRouting
