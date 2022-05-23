@@ -173,8 +173,23 @@ router.post('/signin', async (req, res) => {
 
 
 
-// new++++
 
+// new++++
+// email send
+router.post('/email-send', async(req, res)=>{
+    try {
+        const email = req.body.email
+        const userData = await User.findOne({email:email})
+        if(!userData) return res.status(422).json({ error: "the email id is  not  exist!!" })
+
+        // generate OTP
+        let otpCode = Math.floor(100000 + Math.random() * 900000)
+        console.log(otpCode)
+
+    } catch (error) {
+        console.log(error)
+    }
+})
 
 router.post('/reset-password',(req,res)=>{
      crypto.randomBytes(32,(err,buffer)=>{
