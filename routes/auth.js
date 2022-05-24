@@ -9,6 +9,26 @@ const Jwt_Token = require('../keys/keys');
 
 
 
+router.post('/send-email', function (req, res) {
+    email = req.body.email;
+    const userData = User.findOne({email:email})
+    if(!userData) return res.status(422).json({ error: "the email id is  not  exist!!" })
+
+    var mailOptions = {
+        to: req.body.email,
+        subject: "Otp for registration is: ",
+        html: `<html>
+                    <h3>OTP for account verification is </h3>" + "<h1 style='font-weight:bold;'>"${otp}</h1>
+                </html>`
+    };
+    transporter.sendMail(mailOptions, (error, res) => {
+        if (error) {
+            return console.log(error);
+        }
+      
+    });
+});
+
 
 
 // get method for print hello node js as default routes
