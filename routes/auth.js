@@ -264,4 +264,90 @@ router.post('/new-password',(req,res)=>{
 })
 
 
+// email send for  otp
+
+var email;
+
+let transporter = nodemailer.createTransport({
+    host: "smtp.gmail.com",
+    service: 'gmail',
+    port: 587,
+    secureConnection: false,
+    auth: {
+      user: 'otpverify000@gmail.com',
+      pass: 'Chetu@123',
+    }
+});
+
+transporter.verify((error,success)=>{
+    try {
+    if(error){
+        console.log(error,"transporter!!!!!")
+    }else{
+        console.log(success,"transporter")
+    }
+} catch (error) {
+      console.log(error,"catch")  
+}
+})
+
+router.post('/send-otp', async (req, res)=>{
+    try {
+        email = req.body.email;
+        const userData = User.findOne({email:email})
+        if(!userData) return res.status(422).json({ error: "the email id is  not  exist!!" })
+
+            const otp = Math.floor(100000 + Math.random() * 900000)
+            console.log(otp,"otp")
+
+// hash otp
+        const hashedOtp =  await bcrypt.hash(otp, 12)
+        const newOtpVerification = await new otpVerification({
+            userId: _id,
+            otp: hashedOtp,
+            createAt:Date.now(),
+            expireAt:Date.now + 360000,
+        });
+
+ const otpResponse = await newOtpVerification.save();
+
+
+let mailOptions = {
+    from: 'otpverify000@gmail.com',
+    to: 'zahidk@chetu.com',
+    subject: 'Verify Your OTP',
+    html: `<html> 
+                <h1>Hi,</h1> 
+                    <br/>
+                <p style="color:grey; font-size:14px">Please use the below OTP code to complete your account</p>
+                    <br><br>
+                <h1 style="color:orange">${otp}</h1>
+                </html>`
+        }
+
+  await newOtpVerification.save();
+
+  await transporter.sendMail(mailOptions,(err, res)=>{
+
+  });
+
+  res.json({
+      status:"PENDING",
+      message:"Your 6 digit Otp sent",
+      data:{
+          userId:_id,
+          email,
+      },
+  })
+
+    } catch (error) {
+         res.json({
+             status:"FAILED",
+             message:error.message,
+         })     
+    }
+})
+
+
+
 module.exports = router
