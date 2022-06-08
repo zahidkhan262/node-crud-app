@@ -195,7 +195,7 @@ router.post('/signin', async (req, res) => {
 
 
 // new++++
-// email send
+// email send for otp
 router.post('/email-send', async(req, res)=>{
     try {
         const email = req.body.email
