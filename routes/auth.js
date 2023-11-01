@@ -8,6 +8,77 @@ const protectLogin = require('../middleware/protectLogin')
 const Jwt_Token = require('../keys/keys');
 
 
+// contact us code...
+app.use('/api/auth', require('./routes/auth/auth-route')); //erver.js file..
+
+router.post('/contact-us', contactUsAPI); // route file..
+//  contact us
+
+const contactUsAPI = asyncHandler(async (req, res) => { // controller file ..
+    try {
+        const { username, email, message } = req.body;
+
+        console.log(username, email, message)
+
+        transporter.sendMail(mailOptionContactFn(username, message, email), (error, info) => {
+            if (error) {
+                console.log("errr", error.message);
+            } else {
+                console.log("Mail has been sent on: ", email, info.response)
+                res.status(200).json({ success: true, message: "Email sent successfully" });
+            }
+        })
+
+    } catch (error) {
+        res.status(500).json({ message: "An error occured while sending mail!" })
+
+    }
+})
+
+
+//config file for nodemailer setup
+const nodemailer = require('nodemailer');
+
+const transporter = nodemailer.createTransport({
+    host: 'smtp.gmail.com',
+    port: 465,
+    secure: true,
+    requireTLS: true,
+    auth: {
+        user: process.env.USER_EMAIL,
+        pass: process.env.USER_EMAIL_PASSWORD
+    }
+});
+
+const mailOptionResetPassFn = (username, email) => {
+    return {
+        from: process.env.USER_EMAIL,
+        to: email,
+        subject: "Reset Password!!",
+        html: `<p>To reset your password,${username} please click or copy the following link: <a href="http://localhost:8000/api/auth/reset-password?email=${email}">link</a> and reset the password</p>`
+    }
+}
+const mailOptionContactFn = (username, message) => {
+    const subject = "Contact Us"
+    return {
+        from: process.env.USER_EMAIL,
+        to: email,
+        subject: subject,
+        html: `<p>Username: ${username}\nSubject: ${subject}\nMessage: ${message}</p>`
+    }
+}
+
+
+
+module.exports = { transporter, mailOptionResetPassFn, mailOptionContactFn }
+
+
+
+
+
+
+
+
 
 router.post('/send-email', function (req, res) {
     email = req.body.email;
