@@ -8,6 +8,221 @@ const protectLogin = require('../middleware/protectLogin')
 const Jwt_Token = require('../keys/keys');
 
 
+
+//jwt authentication
+
+
+//token
+
+const generateJWTToken = (user) => {
+    // const tokenExpirationTime = Math.floor(Date.now() / 1000) + expiresIn;
+    return jwt.sign({ ...user.toJSON() }, process.env.ACCESS_SECRET_KEY, { expiresIn: '15m' })
+}
+
+// refresh token
+
+const generateRefreshToken = (user) => {
+    return jwt.sign(user.toJSON(), process.env.REFRESH_SECRET_KEY, { expiresIn: '24h' })
+}
+
+const hashPassword = async (password) => {
+    const salt = await bcrypt.genSalt(10)
+
+    return await bcrypt.hash(password, salt)
+}
+
+const verifyHashPassword = async (password, userPassword) => {
+    return await bcrypt.compare(password, userPassword)
+}
+
+
+
+const logoutUser = async (request, response) => {
+    const token = request.body.token;
+    await Token.deleteOne({ token: token });
+
+    response.status(204).json({ msg: 'logout successfull' });
+}
+
+
+
+const jwt = require('jsonwebtoken');
+const asyncHandler = require('express-async-handler');
+const Token = require('../models/token-model');
+
+
+const authMiddleware = asyncHandler(async (req, res, next) => {
+
+    let authHeader = req.headers['authorization']
+
+    const token = authHeader && authHeader.split(' ')[1]
+    // console.log(token, 'token')
+    if (token == null) {
+        return res.status(401).json({ msg: 'token is missing' });
+    }
+
+    jwt.verify(token, process.env.ACCESS_SECRET_KEY, (error, user) => {
+        if (error) {
+            return res.status(403).json({ msg: 'Invalid token' })
+        }
+        req.user = user;
+        // console.log(req.user, "user token")
+        next()
+
+    })
+});
+
+
+const createNewToken = asyncHandler(async (req, res) => {
+    const refreshToken = req.body.token.split(' ')[1];
+    console.log(refreshToken, "refreshToken")
+
+    if (!refreshToken) {
+        return res.status(401).json({ msg: 'Refresh token is missing' })
+    }
+
+    const token = await Token.findOne({ token: refreshToken });
+
+    if (!token) {
+        return res.status(404).json({ msg: 'Refresh token is not valid' });
+    }
+
+    jwt.verify(token.token, process.env.REFRESH_SECRET_KEY, (error, user) => {
+        if (error) {
+            res.status(500).json({ msg: 'invalid refresh token' });
+        }
+
+        const accessToken = jwt.sign(user, process.env.ACCESS_SECRET_KEY, { expiresIn: '15m' });
+        return res.status(200).json({ accessToken: accessToken })
+    })
+
+})
+
+module.exports = { authMiddleware, createNewToken }
+
+
+
+// crud for blog app
+const Blog = require('../../models/blogs-model');
+const asyncHandler = require('express-async-handler')
+const User = require('../../models/auth-model');
+
+//create blog api
+
+const createBlog = asyncHandler(async (req, res) => {
+    try {
+        const blog = await new Blog(req.body);
+        if (!blog) {
+            return res.status(401).json({ message: "Failed to update user!! or blog not found" })
+        }
+        blog.save();
+        res.status(200).json({ message: 'Blog saved successfully' });
+
+    } catch (error) {
+        return res.status(500).json({ message: error.message });
+    }
+})
+
+
+//get all blog api
+
+const getAllBlog = asyncHandler(async (req, res) => {
+    try {
+        const blogs = await Blog.find({});
+        return res.status(200).json(blogs)
+    } catch (error) {
+        return res.status(500).json({ message: error.message })
+    }
+})
+
+//get single blog
+const getBlogById = asyncHandler(async (req, res) => {
+    try {
+        const blog = await Blog.findById(req.params.id);
+        return res.status(200).json(blog);
+    } catch (error) {
+        return res.status(500).json({ message: error.message })
+    }
+})
+
+const updateBlog = asyncHandler(async (req, res) => {
+    try {
+        const blog = await Blog.findById(req.params.id)
+        if (!blog) {
+            return res.status(401).json({ message: 'Blog not found!' })
+        }
+        await Blog.findByIdAndUpdate(req.params.id, { $set: req.body });
+        return res.status(200).json({ message: 'Blog successfully Updated' });
+    } catch (error) {
+        return res.status(500).json({ message: error.message })
+
+    }
+})
+const deleteBlog = asyncHandler(async (req, res) => {
+    try {
+        const blog = await Blog.findById(req.params.id)
+        if (!blog) {
+            return res.status(401).json({ message: 'Blog not found!' })
+        }
+        await blog.delete();
+        return res.status(200).json({ message: 'Blog successfully Deleted' });
+    } catch (error) {
+        return res.status(500).json({ message: error.message })
+
+    }
+})
+
+
+
+
+
+module.exports = { createBlog, getAllBlog, getBlogById, updateBlog, deleteBlog }
+
+//model for blog
+const mongoose = require('mongoose');
+
+const blogsSchema = mongoose.Schema({
+    user: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User',
+    },
+    title: {
+        type: String,
+        required: true,
+    },
+    description: {
+        type: String,
+        required: true
+    },
+    picture: {
+        type: String,
+        required: false
+    },
+    username: {
+        type: String,
+        required: true
+    },
+    createdAt: {
+        type: Date
+    },
+    likes: [{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "User"
+    }],
+    comments: [{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Comments'
+    }],
+},
+    {
+        timestamps: true
+    })
+
+
+module.exports = mongoose.model('Blogs', blogsSchema)
+
+
+
 // contact us code...
 app.use('/api/auth', require('./routes/auth/auth-route')); //erver.js file..
 
